@@ -1,5 +1,9 @@
 package main
 
+type Server struct {
+	State GameState
+}
+
 type EventType int64
 
 const (
@@ -7,13 +11,14 @@ const (
 )
 
 type Event struct {
-	Type EventType
+	Resource string
+	Data     []byte
 }
 
 type Player struct {
 	Money int
 }
 
-type State struct {
+type GameState struct {
 	Players map[string]Player
 }
