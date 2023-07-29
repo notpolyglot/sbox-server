@@ -16,6 +16,7 @@ func GetUser(id64 string) (structs.User, error) {
 		return structs.User{}, err
 	}
 
+	//i hate this i think theres a way to just select 1 row but cant find it
 	if len(rows) == 0 {
 		return structs.User{}, errors.New("no rows")
 	}
