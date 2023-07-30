@@ -14,15 +14,24 @@ func registerUserHandlers(f *fiber.App) {
 }
 
 func handleLogin(c *fiber.Ctx) error {
-	req := new(structs.LoginReq)
-	if err := c.BodyParser(req); err != nil {
-		return err
+	id := c.Get("Steam-ID64")
+
+	_, err := db.GetUser(id)
+	if err != nil {
+		if err.Error() == "no rows in result set" {
+			err := db.CreateUser(id)
+			if err != nil {
+				return err
+			}
+		}
 	}
 
-	user, err := db.GetUser(req.Id)
+	money, err := db.GetMoney(id)
 	if err != nil {
 		return err
 	}
 
-	return c.JSON(user)
+	return c.JSON(structs.LoginResponse{
+		Money: money,
+	})
 }
