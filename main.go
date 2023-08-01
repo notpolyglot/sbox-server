@@ -6,8 +6,13 @@ import (
 	"sbox-backend/handlers"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/joho/godotenv"
 )
+
+func handleFiberError(c *fiber.Ctx, err error) error {
+	return c.Status(fiber.StatusInternalServerError).SendString("Internal Server Error")
+}
 
 func main() {
 	err := godotenv.Load()
@@ -17,9 +22,13 @@ func main() {
 
 	db.Connect()
 
-	f := fiber.New()
+	f := fiber.New(fiber.Config{
+		ErrorHandler: handleFiberError,
+	})
+	f.Use(logger.New())
+	// Logging Request ID
 
 	handlers.RegisterHandlers(f)
 
-	log.Fatal(f.Listen(":3000"))
+	log.Fatal(f.Listen(":80"))
 }
